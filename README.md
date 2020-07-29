@@ -3,7 +3,7 @@
     - holds the firedrake code to build a bilinear form
       for transmission
     - assembles the bilinear form into a matrix A.
-    - creates a preconditioner from the preconditioner
+    - creates a preconditioner from the preconditioner class
         made in two_D_helmholtz.py
 
 * two_D_helmholtz.py

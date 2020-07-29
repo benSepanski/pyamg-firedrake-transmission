@@ -1,10 +1,10 @@
 * transmission.py
 
-    This holds the firedrake code that builds a true solution
-    for the mesh and also the transmission weak form.
-    It assembles the bilinear form into a matrix A.
-    It also creates a preconditioner from the preconditioner
-    made in two_D_helmholtz.py
+    - holds the firedrake code to build a bilinear form
+      for transmission
+    - assembles the bilinear form into a matrix A.
+    - creates a preconditioner from the preconditioner
+        made in two_D_helmholtz.py
 
 * two_D_helmholtz.py
 

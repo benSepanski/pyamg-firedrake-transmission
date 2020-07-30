@@ -1,3 +1,15 @@
+# Setup
+
+```bash
+curl -O https://raw.githubusercontent.com/firedrakeproject/firedrake/wence/complex/scripts/firedrake-install
+python3 firedrake-install --complex --package-branch firedrake wence/complex
+source firedrake/bin/activate
+pip install scipy pyamg
+```
+
+
+# File Descriptions
+
 * transmission.py
 
     - holds the firedrake code to build a bilinear form

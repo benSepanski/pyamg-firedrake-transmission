@@ -136,4 +136,3 @@ class AMGTransmissionPreconditioner:
         residuals = []
         # y <- A^{-1} x
         y[:] = self.sa.solve(x.getArray(), x0=self.x0, residuals=residuals, **self.SA_solve_args)[:]
-        print("RESIDUALS=", residuals)

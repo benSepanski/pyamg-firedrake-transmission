@@ -11,7 +11,9 @@ Install gmsh, then in the `pyamg-firedrake-transmission` directory run the comma
 make meshes
 ```
 
-# Matrix text files
+# File Descriptions
+
+## Matrix text files
 
 Matrix text files are stored in `matrix_txt_files/`. The file name
 format tells what dimension the helmholtz operator is in
@@ -20,8 +22,26 @@ by a `'%'`. For example, a 2D helmholtz matrix on a mesh
 with maximum characteristic length `0.25` would have a matrix
 filename of `helmholtz-2D-h0%25.txt`.
 
+## Meshes
 
-# File Descriptions
+Meshes are stored in the `meshes/` directory. There is a 2D mesh
+(a circle cut out of a square) and a 3D mesh (a ball cut out of a cube).
+In both cases the sphere is the scatterer with a neumann BC
+and the boundary of the square has the transmission boundary.
+Running `make meshes` builds a bunch of `.msh` files in the
+`meshes/circle_in_square` and `meshes/ball_in_cube` directories
+(as well as `.options` files detailing the `gmsh` options used, you
+can ignore those).
+The filename will be `f'max{h}.msh'` where `h` is the maximum
+characteristic length as a string, with `'.'` replaced by `'%'`.
+For instance, the 2D mesh created with max characteristic length `0.25`
+would be the file `meshes/circle_in_square/max0%25.msh`.
+
+To change the number of refinements created of each mesh, change at
+the global constants at the beginning of `bin/make_meshes`, then run
+`make meshes` again.
+
+## Python Files
 
 * transmission.py
 

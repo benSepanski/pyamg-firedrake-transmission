@@ -2,7 +2,7 @@ import firedrake.variational_solver as vs
 import numpy as np
 
 from firedrake import (
-    ln, pi, Mesh, SpatialCoordinate, sqrt,
+    ln, pi, Mesh, SpatialCoordinate, sqrt, exp,
     FunctionSpace, Function, TrialFunction, TestFunction,
     FacetNormal, inner, grad, dx, ds, Constant,
     assemble
@@ -35,6 +35,21 @@ def hankel_function(expr, n):
     return h_0
 
 
+def get_true_sol_expr(spatial_coord, wave_number):
+    mesh_dim = len(spatial_coord)
+    if mesh_dim == 3:
+        x, y, z = spatial_coord
+        norm = sqrt(x**2 + y**2 + z**2)
+        return Constant(1j / (4*pi)) / norm * exp(1j * wave_number * norm)
+
+    elif mesh_dim == 2:
+        x, y = spatial_coord
+        return Constant(1j / 4) * hankel_function(
+            wave_number * sqrt(x**2 + y**2), n=80)
+    raise ValueError("Only meshes of dimension 2, 3 supported")
+
+
+# Get the mesh and appropriate boundary tags
 mesh_file_name = 'meshes/circle_in_square/max0%25.msh'
 h = mesh_file_name[mesh_file_name.find('%')-1:mesh_file_name.find('.')]
 mesh = Mesh(mesh_file_name)
@@ -46,15 +61,14 @@ else:
     scatterer_bdy_id = 1
     outer_bdy_id = 3
 
-
+# build fspace and bilinear forms
 fspace = FunctionSpace(mesh, 'CG', 1)
 
 u = TrialFunction(fspace)
 v = TestFunction(fspace)
 
 wave_number = 0.1  # one of [0.1, 1.0, 5.0, 10.0]
-true_sol = Constant(1j / 4) * hankel_function(wave_number * sqrt(x**2 + y**2),
-                                              n=80)
+true_sol = get_true_sol_expr(SpatialCoordinate(mesh), wave_number)
 
 a = inner(grad(u), grad(v)) * dx \
     - Constant(wave_number**2) * inner(u, v) * dx \
@@ -70,7 +84,7 @@ solution = Function(fspace)
 # Create problem
 problem = vs.LinearVariationalProblem(a, L, solution)
 
-# Create solver and call solve
+# Create solver
 pyamg_tol = None
 pyamg_maxiter = None
 solver_params = {'pyamg_tol': pyamg_tol,
@@ -79,7 +93,8 @@ solver_params = {'pyamg_tol': pyamg_tol,
                  }
 solver = vs.LinearVariationalSolver(problem,
                                     solver_parameters=solver_params)
-# prepare to set up pyamg preconditioner if using it
+
+# Build matrix and store text file
 A = assemble(a).M.handle
 store_mat = True
 if store_mat:
@@ -92,7 +107,7 @@ if store_mat:
         comm=PETSc.COMM_WORLD)
     A.view(myviewer)
 
-# solve
+# set up pyamg preconditioner and solve
 pc = solver.snes.getKSP().pc
 pc.setType(pc.Type.PYTHON)
 pc.setPythonContext(AMGTransmissionPreconditioner(wave_number,

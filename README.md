@@ -11,6 +11,15 @@ Install gmsh, then in the `pyamg-firedrake-transmission` directory run the comma
 make meshes
 ```
 
+# Basic Usage
+
+In `transmission.py`, set `wave_number`, `pyamg_tol`, `pyamg_maxiter`, and `mesh_file_name`
+to your liking. If you want to save the matrix, make sure `store_mat = True`. Then,
+run `python transmission.py`. This should solve the problem using a `pyamg`
+solver as a preconditioner. It will save the matrix in `matrix_txt_files` if requested.
+
+To further futz with `pyamg` settings, look at `two_D_helmholtz.py`.
+
 # File Descriptions
 
 ## Matrix text files

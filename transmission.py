@@ -35,10 +35,17 @@ def hankel_function(expr, n):
     return h_0
 
 
-mesh = Mesh('meshes/circle_in_square.msh')
+mesh_file_name = 'meshes/circle_in_square/max0%25.msh'
+h = mesh_file_name[mesh_file_name.find('%')-1:mesh_file_name.find('.')]
+mesh = Mesh(mesh_file_name)
 x, y = SpatialCoordinate(mesh)
-scatterer_bdy_id = 1
-outer_bdy_id = 2
+if mesh.geometric_dimension() == 2:
+    scatterer_bdy_id = 1
+    outer_bdy_id = 2
+else:
+    scatterer_bdy_id = 1
+    outer_bdy_id = 3
+
 
 fspace = FunctionSpace(mesh, 'CG', 1)
 
@@ -68,11 +75,24 @@ pyamg_tol = None
 pyamg_maxiter = None
 solver_params = {'pyamg_tol': pyamg_tol,
                  'pyamg_maxiter': pyamg_maxiter,
+                 'ksp_monitor': None,
                  }
 solver = vs.LinearVariationalSolver(problem,
                                     solver_parameters=solver_params)
 # prepare to set up pyamg preconditioner if using it
 A = assemble(a).M.handle
+store_mat = True
+if store_mat:
+    dim = mesh.geometric_dimension()
+    file_name = f"matrix_txt_files/helmholtz-{dim}D-max{h}.txt"
+    from firedrake.petsc import PETSc
+    myviewer = PETSc.Viewer().createASCII(
+        file_name,
+        mode=PETSc.Viewer.Format.ASCII_COMMON,
+        comm=PETSc.COMM_WORLD)
+    A.view(myviewer)
+
+# solve
 pc = solver.snes.getKSP().pc
 pc.setType(pc.Type.PYTHON)
 pc.setPythonContext(AMGTransmissionPreconditioner(wave_number,

@@ -6,6 +6,10 @@ python3 firedrake-install --complex --package-branch firedrake wence/complex
 source firedrake/bin/activate
 pip install scipy pyamg
 ```
+Install gmsh, then in the `pyamg-firedrake-transmission` directory run the command
+```bash
+make meshes
+```
 
 
 # File Descriptions

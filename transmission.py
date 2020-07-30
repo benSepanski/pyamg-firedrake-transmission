@@ -53,7 +53,6 @@ def get_true_sol_expr(spatial_coord, wave_number):
 mesh_file_name = 'meshes/circle_in_square/max0%25.msh'
 h = mesh_file_name[mesh_file_name.find('%')-1:mesh_file_name.find('.')]
 mesh = Mesh(mesh_file_name)
-x, y = SpatialCoordinate(mesh)
 if mesh.geometric_dimension() == 2:
     scatterer_bdy_id = 1
     outer_bdy_id = 2

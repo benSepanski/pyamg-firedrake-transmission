@@ -84,7 +84,7 @@ A = assemble(a).M.handle
 store_mat = True
 if store_mat:
     dim = mesh.geometric_dimension()
-    file_name = f"matrix_txt_files/helmholtz-{dim}D-max{h}.txt"
+    file_name = f"matrix_txt_files/helmholtz-{dim}D-h{h}.txt"
     from firedrake.petsc import PETSc
     myviewer = PETSc.Viewer().createASCII(
         file_name,

@@ -11,6 +11,15 @@ Install gmsh, then in the `pyamg-firedrake-transmission` directory run the comma
 make meshes
 ```
 
+# Matrix text files
+
+Matrix text files are stored in `matrix_txt_files/`. The file name
+format tells what dimension the helmholtz operator is in
+followed by the maximum characteristic length with `'.'` replaced
+by a `'%'`. For example, a 2D helmholtz matrix on a mesh
+with maximum characteristic length `0.25` would have a matrix
+filename of `helmholtz-2D-h0%25.txt`.
+
 
 # File Descriptions
 
